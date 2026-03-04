@@ -282,6 +282,158 @@
       opacity:.9;
       pointer-events:none;
     }
+    /* ===== КАРУСЕЛЬ ПОД ФОТО + ЛАЙТБОКС ===== */
+.carousel{
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.car-main{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+  transition: opacity .18s ease;
+}
+
+/* кнопки влево/вправо */
+.car-btn{
+  position:absolute;
+  top:50%;
+  transform: translateY(-50%);
+  width:40px;
+  height:40px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 10px 24px rgba(20,20,30,.12);
+  cursor:pointer;
+  font-size:22px;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  user-select:none;
+  z-index: 2;
+}
+.car-btn.prev{ left:10px; }
+.car-btn.next{ right:10px; }
+.car-btn:active{ transform: translateY(-50%) scale(.98); }
+
+/* точки */
+.car-dots{
+  position:absolute;
+  left:0; right:0;
+  bottom:10px;
+  display:flex;
+  justify-content:center;
+  gap:7px;
+  z-index: 2;
+}
+.car-dots button{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  border:1px solid rgba(20,20,30,.22);
+  background: rgba(255,255,255,.55);
+  cursor:pointer;
+  padding:0;
+}
+.car-dots button.active{
+  background: rgba(217,72,122,.85);
+  border-color: rgba(217,72,122,.55);
+}
+
+/* 3 миниатюры под фото */
+.car-thumbs{
+  padding: 10px 14px 0;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.car-thumbs button{
+  appearance:none;
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.75);
+  border-radius: 14px;
+  overflow:hidden;
+  cursor:pointer;
+  padding:0;
+  aspect-ratio: 1 / 1;
+}
+.car-thumbs button.active{
+  outline: 2px solid rgba(217,72,122,.45);
+  outline-offset: 2px;
+}
+.car-thumbs img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+}
+
+/* если фото не найдено */
+.car-placeholder{
+  position:absolute;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:18px;
+  color:#666;
+  font-size:14px;
+  z-index: 1;
+}
+.carousel.missing .car-placeholder{ display:flex; }
+.carousel.missing .car-main,
+.carousel.missing .car-btn,
+.carousel.missing .car-dots{ display:none; }
+
+/* ===== ЛАЙТБОКС (открыть на весь экран) ===== */
+body.lb-open{ overflow:hidden; }
+
+.lightbox{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding: 18px;
+  background: rgba(10,10,12,.72);
+  z-index: 9999;
+}
+.lightbox.show{ display:flex; }
+
+.lightbox img{
+  max-width: min(1100px, 96vw);
+  max-height: 86vh;
+  border-radius: 18px;
+  box-shadow: 0 18px 70px rgba(0,0,0,.35);
+}
+
+.lb-btn{
+  position: absolute;
+  border:1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border-radius: 999px;
+  width:44px;
+  height:44px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 22px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.lb-close{ top:14px; right:14px; font-size: 26px; }
+.lb-prev{ left:14px; top:50%; transform: translateY(-50%); }
+.lb-next{ right:14px; top:50%; transform: translateY(-50%); }
+.lb-full{ top:14px; left:14px; }
   </style>
 </head>
 
@@ -354,9 +506,18 @@
       <h2 class="section-title">Ваши улыбки — наш главный план</h2>
       <div class="gallery">
         <article class="girl-card">
-          <figure>
-            <img src="assets/eugeniya.jpg" alt="Фото Евгении" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;color:#666;font-size:14px;padding:18px;text-align:center;&quot;>Добавьте фото: <b>assets/eugeniya.jpg</b></div>';">
-          </figure>
+          <figure class="carousel"
+  data-images="assets/eugeniya_1.jpg,assets/eugeniya_2.jpg,assets/eugeniya_3.jpg,assets/eugeniya_4.jpg"
+  data-alt="Фото Евгении">
+  <button class="car-btn prev" type="button" aria-label="Предыдущее фото">‹</button>
+  <img class="car-main" src="assets/eugeniya_1.jpg" alt="Фото Евгении" loading="lazy">
+  <button class="car-btn next" type="button" aria-label="Следующее фото">›</button>
+  <div class="car-dots" aria-label="Выбор фото"></div>
+  <div class="car-placeholder" aria-hidden="true">
+    Добавьте фото: <b>assets/eugeniya_1.jpg</b>
+  </div>
+</figure>
+<div class="car-thumbs" aria-label="Ещё фото Евгении"></div>
           <figcaption>
             <p class="girl-name">Евгения</p>
             <p class="girl-note">Самая милая, любимая и т.д.</p>
@@ -364,9 +525,18 @@
         </article>
 
         <article class="girl-card">
-          <figure>
-            <img src="assets/mariya.jpg" alt="Фото Марии" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;color:#666;font-size:14px;padding:18px;text-align:center;&quot;>Добавьте фото: <b>assets/mariya.jpg</b></div>';">
-          </figure>
+          <figure class="carousel"
+  data-images="assets/mariya_1.jpg,assets/mariya_2.jpg,assets/mariya_3.jpg,assets/mariya_4.jpg"
+  data-alt="Фото Марии">
+  <button class="car-btn prev" type="button" aria-label="Предыдущее фото">‹</button>
+  <img class="car-main" src="assets/mariya_1.jpg" alt="Фото Марии" loading="lazy">
+  <button class="car-btn next" type="button" aria-label="Следующее фото">›</button>
+  <div class="car-dots" aria-label="Выбор фото"></div>
+  <div class="car-placeholder" aria-hidden="true">
+    Добавьте фото: <b>assets/mariya_1.jpg</b>
+  </div>
+</figure>
+<div class="car-thumbs" aria-label="Ещё фото Марии"></div>
           <figcaption>
             <p class="girl-name">Мария</p>
             <p class="girl-note">Самый сладкий заклинатель котеек.</p>
@@ -374,9 +544,18 @@
         </article>
 
         <article class="girl-card">
-          <figure>
-            <img src="assets/sofiya.jpg" alt="Фото Софьи" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;color:#666;font-size:14px;padding:18px;text-align:center;&quot;>Добавьте фото: <b>assets/sofiya.jpg</b></div>';">
-          </figure>
+          <figure class="carousel"
+  data-images="assets/sofiya_1.jpg,assets/sofiya_2.jpg,assets/sofiya_3.jpg,assets/sofiya_4.jpg"
+  data-alt="Фото Софьи">
+  <button class="car-btn prev" type="button" aria-label="Предыдущее фото">‹</button>
+  <img class="car-main" src="assets/sofiya_1.jpg" alt="Фото Софьи" loading="lazy">
+  <button class="car-btn next" type="button" aria-label="Следующее фото">›</button>
+  <div class="car-dots" aria-label="Выбор фото"></div>
+  <div class="car-placeholder" aria-hidden="true">
+    Добавьте фото: <b>assets/sofiya_1.jpg</b>
+  </div>
+</figure>
+<div class="car-thumbs" aria-label="Ещё фото Софьи"></div>
           <figcaption>
             <p class="girl-name">Софья</p>
             <p class="girl-note">Самая банановая.</p>
@@ -384,9 +563,18 @@
         </article>
 
         <article class="girl-card">
-          <figure>
-            <img src="assets/alexandra.jpg" alt="Фото Александры" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;color:#666;font-size:14px;padding:18px;text-align:center;&quot;>Добавьте фото: <b>assets/alexandra.jpg</b></div>';">
-          </figure>
+          <figure class="carousel"
+  data-images="assets/alexandra_1.jpg,assets/alexandra_2.jpg,assets/alexandra_3.jpg,assets/alexandra_4.jpg"
+  data-alt="Фото Александры">
+  <button class="car-btn prev" type="button" aria-label="Предыдущее фото">‹</button>
+  <img class="car-main" src="assets/alexandra_1.jpg" alt="Фото Александры" loading="lazy">
+  <button class="car-btn next" type="button" aria-label="Следующее фото">›</button>
+  <div class="car-dots" aria-label="Выбор фото"></div>
+  <div class="car-placeholder" aria-hidden="true">
+    Добавьте фото: <b>assets/alexandra_1.jpg</b>
+  </div>
+</figure>
+<div class="car-thumbs" aria-label="Ещё фото Александры"></div>
           <figcaption>
             <p class="girl-name">Александра</p>
             <p class="girl-note">Ты наша вредность.❤️</p>
@@ -394,9 +582,18 @@
         </article>
 
         <article class="girl-card">
-          <figure>
-            <img src="assets/elizaveta.jpg" alt="Фото Елизаветы" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;color:#666;font-size:14px;padding:18px;text-align:center;&quot;>Добавьте фото: <b>assets/elizaveta.jpg</b></div>';">
-          </figure>
+          <figure class="carousel"
+  data-images="assets/elizaveta_1.jpg,assets/elizaveta_2.jpg,assets/elizaveta_3.jpg,assets/elizaveta_4.jpg"
+  data-alt="Фото Елизаветы">
+  <button class="car-btn prev" type="button" aria-label="Предыдущее фото">‹</button>
+  <img class="car-main" src="assets/elizaveta_1.jpg" alt="Фото Елизаветы" loading="lazy">
+  <button class="car-btn next" type="button" aria-label="Следующее фото">›</button>
+  <div class="car-dots" aria-label="Выбор фото"></div>
+  <div class="car-placeholder" aria-hidden="true">
+    Добавьте фото: <b>assets/elizaveta_1.jpg</b>
+  </div>
+</figure>
+<div class="car-thumbs" aria-label="Ещё фото Елизаветы"></div>
           <figcaption>
             <p class="girl-name">Елизавета</p>
             <p class="girl-note">Лобзень.</p>
@@ -404,9 +601,18 @@
         </article>
 
         <article class="girl-card">
-          <figure>
-            <img src="assets/valeriya.jpg" alt="Фото Валерии" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;color:#666;font-size:14px;padding:18px;text-align:center;&quot;>Добавьте фото: <b>assets/valeriya.jpg</b></div>';">
-          </figure>
+          <figure class="carousel"
+  data-images="assets/valeriya_1.jpg,assets/valeriya_2.jpg,assets/valeriya_3.jpg,assets/valeriya_4.jpg"
+  data-alt="Фото Валерии">
+  <button class="car-btn prev" type="button" aria-label="Предыдущее фото">‹</button>
+  <img class="car-main" src="assets/valeriya_1.jpg" alt="Фото Валерии" loading="lazy">
+  <button class="car-btn next" type="button" aria-label="Следующее фото">›</button>
+  <div class="car-dots" aria-label="Выбор фото"></div>
+  <div class="car-placeholder" aria-hidden="true">
+    Добавьте фото: <b>assets/valeriya_1.jpg</b>
+  </div>
+</figure>
+<div class="car-thumbs" aria-label="Ещё фото Валерии"></div>
           <figcaption>
             <p class="girl-name">Валерия</p>
             <p class="girl-note">Сладкая марджанджа.</p>
@@ -423,15 +629,197 @@
     </section>
   </div>
 
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lb-btn lb-full" type="button" aria-label="Полный экран">⤢</button>
+  <button class="lb-btn lb-close" type="button" aria-label="Закрыть">×</button>
+  <button class="lb-btn lb-prev" type="button" aria-label="Предыдущее фото">‹</button>
+  <img class="lb-img" alt="">
+  <button class="lb-btn lb-next" type="button" aria-label="Следующее фото">›</button>
+</div>
   <script>
-    const btn = document.getElementById('toggleSecret');
-    const secret = document.getElementById('secretBlock');
+  const btn = document.getElementById('toggleSecret');
+  const secret = document.getElementById('secretBlock');
 
-    btn.addEventListener('click', () => {
-      const isOpen = secret.classList.toggle('show');
-      btn.setAttribute('aria-expanded', String(isOpen));
-      btn.textContent = isOpen ? 'Скрыть намёк 🙈' : 'Открыть маленький намёк 😉';
+  btn.addEventListener('click', () => {
+    const isOpen = secret.classList.toggle('show');
+    btn.setAttribute('aria-expanded', String(isOpen));
+    btn.textContent = isOpen ? 'Скрыть намёк 🙈' : 'Открыть маленький намёк 😉';
+  });
+
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = lightbox?.querySelector('.lb-img');
+  const lbClose = lightbox?.querySelector('.lb-close');
+  const lbPrev = lightbox?.querySelector('.lb-prev');
+  const lbNext = lightbox?.querySelector('.lb-next');
+  const lbFull = lightbox?.querySelector('.lb-full');
+
+  let lbImages = [];
+  let lbIndex = 0;
+
+  function renderLB(){
+    if (!lbImg || !lbImages.length) return;
+    lbImg.src = lbImages[lbIndex];
+    lbImg.alt = `Фото ${lbIndex + 1} из ${lbImages.length}`;
+  }
+
+  function openLB(images, index){
+    if (!lightbox) return;
+    lbImages = images;
+    lbIndex = index;
+    renderLB();
+    lightbox.classList.add('show');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lb-open');
+  }
+
+  function closeLB(){
+    if (!lightbox || !lbImg) return;
+    lightbox.classList.remove('show');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lb-open');
+    lbImg.src = '';
+  }
+
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLB();
+  });
+  lbClose?.addEventListener('click', closeLB);
+
+  lbPrev?.addEventListener('click', () => {
+    lbIndex = (lbIndex - 1 + lbImages.length) % lbImages.length;
+    renderLB();
+  });
+  lbNext?.addEventListener('click', () => {
+    lbIndex = (lbIndex + 1) % lbImages.length;
+    renderLB();
+  });
+
+  lbFull?.addEventListener('click', async () => {
+    try {
+      if (!document.fullscreenElement) await lightbox.requestFullscreen();
+      else await document.exitFullscreen();
+    } catch (_) {}
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox?.classList.contains('show')) return;
+    if (e.key === 'Escape') closeLB();
+    if (e.key === 'ArrowLeft') lbPrev?.click();
+    if (e.key === 'ArrowRight') lbNext?.click();
+  });
+
+  let lbX0 = 0, lbY0 = 0;
+  lbImg?.addEventListener('touchstart', (e) => {
+    const t = e.changedTouches[0];
+    lbX0 = t.clientX; lbY0 = t.clientY;
+  }, { passive: true });
+
+  lbImg?.addEventListener('touchend', (e) => {
+    const t = e.changedTouches[0];
+    const dx = t.clientX - lbX0;
+    const dy = t.clientY - lbY0;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      dx < 0 ? lbNext?.click() : lbPrev?.click();
+    }
+  }, { passive: true });
+
+  document.querySelectorAll('.carousel').forEach((carousel) => {
+    const main = carousel.querySelector('.car-main');
+    const prev = carousel.querySelector('.prev');
+    const next = carousel.querySelector('.next');
+    const dotsWrap = carousel.querySelector('.car-dots');
+    const thumbsWrap = (carousel.nextElementSibling?.classList.contains('car-thumbs'))
+      ? carousel.nextElementSibling
+      : null;
+
+    const images = (carousel.dataset.images || '')
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    if (!main || images.length === 0) return;
+
+    let index = 0;
+
+    function set(i){
+      index = (i + images.length) % images.length;
+      main.style.opacity = '0.35';
+      main.src = images[index];
+      setTimeout(() => (main.style.opacity = '1'), 60);
+
+      dotsWrap?.querySelectorAll('button').forEach((b) => {
+        b.classList.toggle('active', Number(b.dataset.i) === index);
+      });
+
+      thumbsWrap?.querySelectorAll('button').forEach((b) => {
+        b.classList.toggle('active', Number(b.dataset.i) === index);
+      });
+    }
+
+    main.addEventListener('error', () => {
+      carousel.classList.add('missing');
     });
-  </script>
+
+    prev?.addEventListener('click', (e) => { e.stopPropagation(); set(index - 1); });
+    next?.addEventListener('click', (e) => { e.stopPropagation(); set(index + 1); });
+
+    // точки
+    if (dotsWrap) {
+      dotsWrap.innerHTML = images.map((_, i) =>
+        `<button type="button" data-i="${i}" aria-label="Фото ${i + 1}"></button>`
+      ).join('');
+
+      dotsWrap.querySelectorAll('button').forEach((b) => {
+        b.addEventListener('click', (e) => {
+          e.stopPropagation();
+          set(Number(b.dataset.i));
+        });
+      });
+    }
+
+    // 3 миниатюры (это _2, _3, _4)
+    if (thumbsWrap) {
+      const extras = images.slice(1, 4);
+      thumbsWrap.innerHTML = extras.map((src, k) => {
+        const i = k + 1;
+        return `
+          <button type="button" data-i="${i}" aria-label="Открыть фото ${i + 1}">
+            <img src="${src}" alt="" loading="lazy"
+                 onerror="this.closest('button').style.display='none'">
+          </button>
+        `;
+      }).join('');
+
+      thumbsWrap.querySelectorAll('button').forEach((b) => {
+        b.addEventListener('click', (e) => {
+          e.stopPropagation();
+          set(Number(b.dataset.i));
+        });
+      });
+    }
+
+    carousel.addEventListener('click', (e) => {
+      if (e.target.closest('.car-btn') || e.target.closest('.car-dots')) return;
+      openLB(images, index);
+    });
+
+    let x0 = 0, y0 = 0;
+    carousel.addEventListener('touchstart', (e) => {
+      const t = e.changedTouches[0];
+      x0 = t.clientX; y0 = t.clientY;
+    }, { passive: true });
+
+    carousel.addEventListener('touchend', (e) => {
+      const t = e.changedTouches[0];
+      const dx = t.clientX - x0;
+      const dy = t.clientY - y0;
+      if (Math.abs(dx) > 35 && Math.abs(dx) > Math.abs(dy)) {
+        dx < 0 ? set(index + 1) : set(index - 1);
+      }
+    }, { passive: true });
+
+    set(0);
+  });
+</script>
 </body>
 </html>
